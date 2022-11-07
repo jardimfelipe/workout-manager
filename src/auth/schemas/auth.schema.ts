@@ -18,6 +18,9 @@ export class User {
   @Exclude()
   @Prop({ required: true })
   password: string;
+
+  @Prop()
+  isTeacher: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
