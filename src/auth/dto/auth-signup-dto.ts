@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsEmail,
   IsNumber,
   IsOptional,
@@ -26,4 +27,7 @@ export class AuthSignUpDto {
     message: "Escolha uma senha mais forte",
   })
   password: string;
+
+  @IsBoolean()
+  isTeacher: boolean;
 }
