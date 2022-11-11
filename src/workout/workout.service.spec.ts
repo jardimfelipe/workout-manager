@@ -1,54 +1,11 @@
+import { createMock } from "@golevelup/ts-jest";
 import { getModelToken } from "@nestjs/mongoose";
 import { Test, TestingModule } from "@nestjs/testing";
 import { Model } from "mongoose";
 
-import { WorkoutDto } from "./dto/workout.dto";
 import { Workout, WorkoutDocument } from "./schemas/workout.schema";
+import { mockUser, mockWorkout, mockWorkoutArray } from "./stubs/workout-stub";
 import { WorkoutService } from "./workout.service";
-
-const mockUser = {
-  name: "John Doe",
-  email: "john.doe@email.com",
-  isTeacher: false,
-  age: 20,
-  password: "xxx",
-};
-
-const mockWorkoutDoc = (mock?: Partial<Workout>): Partial<WorkoutDocument> => ({
-  name: "Treino ABC2x",
-  student: mockUser,
-  training: [
-    {
-      name: "A",
-      exercises: [
-        {
-          exercise: "Elevação Lateral",
-          series: "5x9",
-          method: "Drop-set 3x",
-        },
-      ],
-    },
-  ],
-});
-
-const mockWorkout: WorkoutDto = {
-  name: "Treino ABC2x",
-  student: mockUser,
-  training: {
-    name: "A",
-    exercises: [
-      {
-        exercise: "Elevação Lateral",
-        series: "5x9",
-        method: "Drop-set 3x",
-      },
-    ],
-  },
-};
-
-const mockTasksRepository = () => ({
-  createWorkout: jest.fn(),
-});
 
 describe("WorkoutService", () => {
   let service: WorkoutService;
@@ -60,13 +17,19 @@ describe("WorkoutService", () => {
         WorkoutService,
         {
           provide: getModelToken(Workout.name),
-          useValue: { create: jest.fn() },
+          useValue: {
+            create: jest.fn().mockResolvedValue(mockWorkout()),
+            find: jest.fn(),
+            findById: jest.fn(),
+            update: jest.fn(),
+            exec: jest.fn(),
+          },
         },
       ],
     }).compile();
 
     service = module.get<WorkoutService>(WorkoutService);
-    model = module.get<Model<WorkoutDocument>>(getModelToken("Workout"));
+    model = module.get<Model<WorkoutDocument>>(getModelToken(Workout.name));
   });
 
   it("should be defined", () => {
@@ -77,12 +40,39 @@ describe("WorkoutService", () => {
     jest.clearAllMocks();
   });
 
-  it("should ", async () => {
-    jest
-      .spyOn(model, "create")
-      .mockImplementationOnce(() => Promise.resolve({ ...mockWorkout }));
+  it("should create a new workout", async () => {
+    const workout = await service.createWorkout(mockWorkout(), mockUser());
+    expect(workout).toEqual(mockWorkout());
+  });
 
-    const workout = await service.createWorkout(mockWorkout, mockUser);
-    expect(workout).toEqual(mockWorkout);
+  it("should retreive workouts list by user and query", async () => {
+    jest.spyOn(model, "find").mockReturnValueOnce(
+      createMock({
+        where: jest.fn().mockReturnThis(),
+        exec: jest.fn().mockReturnValueOnce(mockWorkoutArray),
+      }) as any
+    );
+    const workouts = await service.getWorkouts(
+      {
+        name: "",
+        student: mockUser(),
+      },
+      mockUser()
+    );
+    expect(workouts).toEqual(mockWorkoutArray);
+  });
+
+  it("should retreive workout by id", async () => {
+    jest.spyOn(model, "findById").mockReturnValueOnce(
+      createMock({
+        where: jest.fn().mockReturnThis(),
+        exec: jest.fn().mockReturnValueOnce(mockWorkout()),
+      }) as any
+    );
+    const found = await service.getWorkoutById(
+      { id: mockWorkout()._id },
+      mockUser()
+    );
+    expect(found).toEqual(mockWorkout());
   });
 });
