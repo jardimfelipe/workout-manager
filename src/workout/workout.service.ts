@@ -1,11 +1,14 @@
 import {
+  ConflictException,
   Injectable,
   InternalServerErrorException,
   Logger,
+  NotFoundException,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import mongoose, { Model } from "mongoose";
 import { User } from "src/auth/schemas/auth.schema";
+import { WorkoutQueryDto } from "./dto/workout-query-dto";
 import { WorkoutDto } from "./dto/workout.dto";
 
 import { Workout, WorkoutDocument } from "./schemas/workout.schema";
@@ -29,5 +32,49 @@ export class WorkoutService {
       );
       throw new InternalServerErrorException();
     }
+  }
+
+  async getWorkouts(
+    workoutQueryDto: WorkoutQueryDto,
+    user: User
+  ): Promise<Workout[]> {
+    const { name, student } = workoutQueryDto;
+    try {
+      return this.workoutModel
+        .find({ name: new RegExp(name, "i") })
+        .where({ ...(student ? { student } : {}), createdBy: user })
+        .exec();
+    } catch (error) {
+      this.logger.error(
+        `Failed to get workouts for user ${
+          user.name
+        }. Filters: ${JSON.stringify(workoutQueryDto)}`,
+        error.stack
+      );
+      throw new InternalServerErrorException();
+    }
+  }
+  async getWorkoutById({ id }: { id: string }, user: User): Promise<Workout> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      this.logger.error(
+        `Failed to get workout for user ${
+          user.name
+        }. Invalid id: ${JSON.stringify(id)}`
+      );
+      throw new ConflictException("Invalid params");
+    }
+    const found = this.workoutModel
+      .findById(id)
+      .where({ createdBy: user })
+      .exec();
+
+    if (!found) {
+      this.logger.error(
+        `Failed to get workout for user ${user.name}. id: ${JSON.stringify(id)}`
+      );
+      throw new NotFoundException("Workout not found");
+    }
+
+    return found;
   }
 }

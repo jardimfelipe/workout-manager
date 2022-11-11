@@ -2,19 +2,9 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
 
 import { User } from "../../auth/schemas/auth.schema";
+import { IExercise, ITraining } from "../interfaces/workout-interfaces";
 
 export type WorkoutDocument = mongoose.HydratedDocument<Workout>;
-
-export interface IExercise {
-  method: string;
-  series: string;
-  exercise: string;
-}
-
-export interface ITraining {
-  name: string;
-  exercises: IExercise[];
-}
 
 @Schema({ _id: false })
 export class Exercise {
@@ -56,4 +46,6 @@ export class Workout {
   createdBy: User;
 }
 
-export const WorkoutSchema = SchemaFactory.createForClass(Workout);
+export const WorkoutSchema = SchemaFactory.createForClass(Workout).index({
+  name: "text",
+});
