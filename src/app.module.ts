@@ -21,6 +21,5 @@ import { WorkoutModule } from "./workout/workout.module";
     WorkoutModule,
   ],
   controllers: [],
-  providers: [],
 })
 export class AppModule {}

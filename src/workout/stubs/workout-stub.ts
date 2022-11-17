@@ -1,18 +1,16 @@
-import { Roles } from "src/auth/schemas/auth.schema";
+import { RolesEnum } from "../../auth/schemas/auth.schema";
 import { IWorkout } from "../interfaces/workout-interfaces";
 import { WorkoutDocument } from "../schemas/workout.schema";
 
 export const mockUser = (
   name = "Treino MOCK",
   email = "john.doe@email.com",
-  isTeacher = false,
   age = 20,
   password = "password",
-  role = Roles.TEACHER
+  role = RolesEnum.TEACHER
 ) => ({
   name,
   email,
-  isTeacher,
   age,
   password,
   role,
@@ -42,6 +40,7 @@ export const mockWorkout = (
   _id = "636c217fadafdbc595bc2000",
   student = mockUser(),
   createdBy = mockUser(),
+  isActive = true,
   training = [
     {
       name: "A",
@@ -59,6 +58,7 @@ export const mockWorkout = (
   _id,
   student,
   createdBy,
+  isActive,
   training,
 });
 

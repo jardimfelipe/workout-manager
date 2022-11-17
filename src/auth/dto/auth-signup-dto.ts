@@ -1,6 +1,6 @@
 import {
-  IsBoolean,
   IsEmail,
+  IsEnum,
   IsNumber,
   IsOptional,
   IsString,
@@ -8,6 +8,7 @@ import {
   MaxLength,
   MinLength,
 } from "class-validator";
+import { RolesEnum } from "../schemas/auth.schema";
 
 export class AuthSignUpDto {
   @IsEmail({}, { message: "Email inválido" })
@@ -28,6 +29,6 @@ export class AuthSignUpDto {
   })
   password: string;
 
-  @IsBoolean()
-  isTeacher: boolean;
+  @IsEnum(RolesEnum)
+  role: RolesEnum;
 }
