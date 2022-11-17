@@ -117,15 +117,13 @@ export class WorkoutService {
     } = workoutPatchDto;
 
     try {
-      return this.workoutModel
-        .findOneAndUpdate(
-          { _id: id },
-          {
-            isActive,
-          },
-          { new: true }
-        )
-        .exec();
+      return this.workoutModel.findOneAndUpdate(
+        { _id: id },
+        {
+          isActive,
+        },
+        { new: true }
+      );
     } catch (error) {
       this.logger.error(`Failed to edit workout isActive. ${error.stack}`);
       throw new InternalServerErrorException();
@@ -149,9 +147,11 @@ export class WorkoutService {
     }
 
     try {
-      return this.workoutModel
-        .findOneAndUpdate({ _id: id }, { ...rest }, { new: true })
-        .exec();
+      return this.workoutModel.findOneAndUpdate(
+        { _id: id },
+        { ...rest },
+        { new: true }
+      );
     } catch (error) {
       this.logger.error(`Failed to edit workout ${body.name}. ${error.stack}`);
       throw new InternalServerErrorException();

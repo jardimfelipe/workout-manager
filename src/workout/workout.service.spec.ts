@@ -99,4 +99,28 @@ describe("WorkoutService", () => {
     );
     expect(alteredWorkout).toEqual(alteredWorkoutMock);
   });
+
+  it("should put workout", async () => {
+    const workoutMock = mockWorkout();
+    const params = {
+      name: "Fake name",
+      id: workoutMock._id,
+    };
+    const alteredWorkoutMock = mockWorkout(
+      params.name,
+      workoutMock._id,
+      workoutMock.student,
+      workoutMock.createdBy
+    );
+    jest
+      .spyOn(model, "findOneAndUpdate")
+      .mockResolvedValueOnce(alteredWorkoutMock);
+
+    jest.spyOn(model, "findById").mockResolvedValueOnce(workoutMock);
+    const alteredWorkout = await service.editWorkout(
+      { body: { ...alteredWorkoutMock }, params: { id: params.id } },
+      mockUser()
+    );
+    expect(alteredWorkout).toEqual(alteredWorkoutMock);
+  });
 });
