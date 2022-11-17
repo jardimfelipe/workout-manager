@@ -21,6 +21,7 @@ describe("WorkoutService", () => {
             create: jest.fn().mockResolvedValue(mockWorkout()),
             find: jest.fn(),
             findById: jest.fn(),
+            findOneAndUpdate: jest.fn(),
             update: jest.fn(),
             exec: jest.fn(),
           },
@@ -74,5 +75,28 @@ describe("WorkoutService", () => {
       mockUser()
     );
     expect(found).toEqual(mockWorkout());
+  });
+
+  it("should change workout status", async () => {
+    const workoutMock = mockWorkout();
+    const params = {
+      isActive: false,
+      id: workoutMock._id,
+    };
+    const alteredWorkoutMock = mockWorkout(
+      workoutMock.name,
+      workoutMock._id,
+      workoutMock.student,
+      workoutMock.createdBy,
+      params.isActive
+    );
+    jest
+      .spyOn(model, "findOneAndUpdate")
+      .mockResolvedValueOnce(alteredWorkoutMock);
+    const alteredWorkout = await service.changeWorkoutStatus(
+      { body: { isActive: params.isActive }, params: { id: params.id } },
+      mockUser()
+    );
+    expect(alteredWorkout).toEqual(alteredWorkoutMock);
   });
 });
