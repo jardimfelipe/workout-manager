@@ -16,5 +16,6 @@ export interface IWorkout {
   name: string;
   training: ITraining[];
   student: User;
+  isActive: boolean;
   createdBy: User;
 }

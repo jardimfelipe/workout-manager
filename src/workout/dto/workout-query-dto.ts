@@ -1,4 +1,4 @@
-import { IsOptional } from "class-validator";
+import { IsBoolean, IsOptional, IsString } from "class-validator";
 import { User } from "src/auth/schemas/auth.schema";
 
 export class WorkoutQueryDto {
@@ -6,5 +6,13 @@ export class WorkoutQueryDto {
   name: string;
 
   @IsOptional()
+  student: User;
+}
+
+export class WorkoutStudentQueryDto {
+  @IsOptional()
+  name: string;
+
+  @IsString()
   student: User;
 }

@@ -39,6 +39,9 @@ export class Workout {
   @Prop({ type: [TrainingSchema], required: true })
   training: ITraining[];
 
+  @Prop({ required: true })
+  isActive: boolean;
+
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "User" })
   student: User;
 
