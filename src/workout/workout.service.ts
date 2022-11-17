@@ -4,12 +4,13 @@ import {
   InternalServerErrorException,
   Logger,
   NotFoundException,
+  UnauthorizedException,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import mongoose, { Model } from "mongoose";
-import { ObjectUnsubscribedError } from "rxjs";
 import { User } from "src/auth/schemas/auth.schema";
 import { WorkoutPatchDto } from "./dto/workout-patch-dto";
+import { WorkoutPutDto } from "./dto/workout-put.dto";
 import {
   WorkoutQueryDto,
   WorkoutStudentQueryDto,
@@ -114,12 +115,46 @@ export class WorkoutService {
       body: { isActive },
       params: { id },
     } = workoutPatchDto;
-    return this.workoutModel.findOneAndUpdate(
-      { _id: id },
-      {
-        isActive,
-      },
-      { new: true }
-    );
+
+    try {
+      return this.workoutModel
+        .findOneAndUpdate(
+          { _id: id },
+          {
+            isActive,
+          },
+          { new: true }
+        )
+        .exec();
+    } catch (error) {
+      this.logger.error(`Failed to edit workout isActive. ${error.stack}`);
+      throw new InternalServerErrorException();
+    }
+  }
+  async editWorkout(
+    workoutPutDto: WorkoutPutDto,
+    user: User
+  ): Promise<Workout> {
+    const {
+      body,
+      params: { id },
+    } = workoutPutDto;
+    const found = await this.workoutModel.findById(workoutPutDto.params.id);
+    const { createdBy, ...rest } = body;
+    if (found.createdBy.email !== user.email) {
+      this.logger.error(
+        `Failed to edit ${body.name}, ${user.name} is not authorized`
+      );
+      throw new UnauthorizedException();
+    }
+
+    try {
+      return this.workoutModel
+        .findOneAndUpdate({ _id: id }, { ...rest }, { new: true })
+        .exec();
+    } catch (error) {
+      this.logger.error(`Failed to edit workout ${body.name}. ${error.stack}`);
+      throw new InternalServerErrorException();
+    }
   }
 }

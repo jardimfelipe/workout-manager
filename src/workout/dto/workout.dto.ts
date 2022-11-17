@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { User } from "src/auth/schemas/auth.schema";
 import { ITraining } from "../interfaces/workout-interfaces";
 

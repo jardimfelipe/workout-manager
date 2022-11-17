@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Query,
   UseGuards,
 } from "@nestjs/common";
@@ -16,6 +17,7 @@ import { RolesGuard } from "src/auth/roles.guard";
 import { RolesEnum, User } from "src/auth/schemas/auth.schema";
 import { BodyAndParam } from "src/decorators/body-and-param-decorator";
 import { WorkoutPatchDto } from "./dto/workout-patch-dto";
+import { WorkoutPutDto } from "./dto/workout-put.dto";
 import {
   WorkoutQueryDto,
   WorkoutStudentQueryDto,
@@ -91,5 +93,14 @@ export class WorkoutController {
     @GetUser() user: User
   ): Promise<Workout> {
     return this.workoutService.changeWorkoutStatus(WorkoutPatchDto, user);
+  }
+
+  @Put("/:id")
+  @Roles(RolesEnum.TEACHER)
+  editWorkout(
+    @BodyAndParam() WorkoutPutDto: WorkoutPutDto,
+    @GetUser() user: User
+  ): Promise<Workout> {
+    return this.workoutService.editWorkout(WorkoutPutDto, user);
   }
 }
