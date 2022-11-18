@@ -115,7 +115,13 @@ export class WorkoutService {
       body: { isActive },
       params: { id },
     } = workoutPatchDto;
-
+    const found = await this.workoutModel.findById(id);
+    if (found.createdBy.email !== user.email) {
+      this.logger.error(
+        `Failed to edit workout status, ${user.name} is not authorized`
+      );
+      throw new UnauthorizedException();
+    }
     try {
       return this.workoutModel.findOneAndUpdate(
         { _id: id },
