@@ -7,6 +7,7 @@ export const mockUser = (
   email = "john.doe@email.com",
   age = 20,
   password = "password",
+  refreshToken = "token",
   role = RolesEnum.TEACHER
 ) => ({
   name,
@@ -14,6 +15,7 @@ export const mockUser = (
   age,
   password,
   role,
+  refreshToken,
 });
 
 export const mockWorkoutDoc = (

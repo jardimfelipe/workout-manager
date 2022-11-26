@@ -22,6 +22,10 @@ export class User {
   email: string;
 
   @Exclude()
+  @Prop()
+  refreshToken: string;
+
+  @Exclude()
   @Prop({ required: true })
   password: string;
 

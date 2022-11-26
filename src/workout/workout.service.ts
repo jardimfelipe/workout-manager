@@ -68,11 +68,11 @@ export class WorkoutService {
     workoutQueryDto: WorkoutStudentQueryDto,
     user: User
   ): Promise<Workout[]> {
-    const { name, student } = workoutQueryDto;
+    const { name } = workoutQueryDto;
     try {
       return this.workoutModel
         .find({ name: new RegExp(name, "i") })
-        .where({ student })
+        .where({ student: user })
         .exec();
     } catch (error) {
       this.logger.error(

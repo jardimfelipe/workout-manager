@@ -12,7 +12,4 @@ export class WorkoutQueryDto {
 export class WorkoutStudentQueryDto {
   @IsOptional()
   name: string;
-
-  @IsString()
-  student: User;
 }
