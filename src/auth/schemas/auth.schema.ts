@@ -22,15 +22,18 @@ export class User {
   email: string;
 
   @Exclude()
-  @Prop()
+  @Prop({ select: false })
   refreshToken: string;
 
   @Exclude()
-  @Prop({ required: true })
+  @Prop({ required: true, select: false })
   password: string;
 
   @Prop()
   role: RolesEnum;
+
+  @Prop()
+  teacherId: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

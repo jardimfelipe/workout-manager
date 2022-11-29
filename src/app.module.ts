@@ -4,6 +4,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 
 import { AuthModule } from "./auth/auth.module";
 import { WorkoutModule } from "./workout/workout.module";
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { WorkoutModule } from "./workout/workout.module";
     }),
     AuthModule,
     WorkoutModule,
+    UserModule,
   ],
   controllers: [],
 })
