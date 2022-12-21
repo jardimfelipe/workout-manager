@@ -12,6 +12,7 @@ import {
 } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { GetUser } from "src/auth/get-user-decorator";
+import { IUser } from "src/auth/Interface/user";
 import { Roles } from "src/auth/roles.decorator";
 import { RolesGuard } from "src/auth/roles.guard";
 import { RolesEnum, User } from "src/auth/schemas/auth.schema";
@@ -36,7 +37,7 @@ export class WorkoutController {
   @Roles(RolesEnum.TEACHER)
   createWorkout(
     @Body() workoutDto: WorkoutDto,
-    @GetUser() user: User
+    @GetUser() user: IUser
   ): Promise<Workout> {
     this.logger.verbose(
       `User "${user.name}" creating a workout. Data ${JSON.stringify(

@@ -11,7 +11,7 @@ import { UserService } from "./user.service";
 @UseGuards(AuthGuard("jwt"), RolesGuard)
 @Controller("users")
 export class UserController {
-  private logger = new Logger("WorkoutController");
+  private logger = new Logger("UserController");
   constructor(private readonly userService: UserService) {}
 
   @Get("/students")

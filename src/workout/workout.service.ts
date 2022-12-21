@@ -8,7 +8,8 @@ import {
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import mongoose, { Model } from "mongoose";
-import { User } from "src/auth/schemas/auth.schema";
+import { IUser } from "src/auth/Interface/user";
+import { User, UserDocument } from "src/auth/schemas/auth.schema";
 import { WorkoutPatchDto } from "./dto/workout-patch-dto";
 import { WorkoutPutDto } from "./dto/workout-put.dto";
 import {
@@ -23,16 +24,26 @@ import { Workout, WorkoutDocument } from "./schemas/workout.schema";
 export class WorkoutService {
   private logger = new Logger("WorkoutRepository", { timestamp: true });
   constructor(
-    @InjectModel(Workout.name) private workoutModel: Model<WorkoutDocument>
+    @InjectModel(Workout.name) private workoutModel: Model<WorkoutDocument>,
+    @InjectModel(User.name) private userModel: Model<UserDocument>
   ) {}
 
-  async createWorkout(workoutDto: WorkoutDto, user: User): Promise<Workout> {
+  async createWorkout(workoutDto: WorkoutDto, user: IUser): Promise<Workout> {
     try {
-      return this.workoutModel.create({
+      const { studentId } = workoutDto;
+
+      const workout = await this.workoutModel.create({
         ...workoutDto,
-        createdBy: user,
+        student: { _id: studentId },
+        createdBy: user._id,
         isActive: true,
       });
+
+      await this.userModel.findByIdAndUpdate(studentId, {
+        $push: { workouts: workout._id },
+      });
+
+      return workout;
     } catch (error) {
       this.logger.error(
         `Failed to create workout for user ${

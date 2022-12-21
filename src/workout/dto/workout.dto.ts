@@ -10,8 +10,8 @@ export class WorkoutDto {
   training: ITraining[];
 
   @IsNotEmpty()
-  student: User;
+  studentId: string;
 
   @IsNotEmpty()
-  createdBy: User;
+  createdBy: string;
 }

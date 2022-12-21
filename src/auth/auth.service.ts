@@ -56,7 +56,7 @@ export class AuthService {
   ): Promise<{ accessToken: string; refreshToken: string }> {
     const { email, password } = authCredentialsDto;
 
-    const user = await this.userModel.findOne({ email });
+    const user = await this.userModel.findOne({ email }).select("+password");
     const isAuthorized =
       user && (await bcrypt.compare(password, user.password));
 

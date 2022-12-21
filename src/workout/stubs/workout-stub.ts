@@ -9,7 +9,8 @@ export const mockUser = (
   password = "password",
   refreshToken = "token",
   role = RolesEnum.TEACHER,
-  teacherId = "teacher_id"
+  teacherId = "teacher_id",
+  workouts = mockWorkoutArray()
 ) => ({
   name,
   email,
@@ -18,6 +19,7 @@ export const mockUser = (
   role,
   refreshToken,
   teacherId,
+  workouts,
 });
 
 export const mockWorkoutDoc = (
