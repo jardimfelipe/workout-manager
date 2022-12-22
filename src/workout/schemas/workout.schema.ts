@@ -45,8 +45,8 @@ export class Workout {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "User" })
   student: User;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "User" })
-  createdBy: User;
+  @Prop()
+  createdBy: string;
 }
 
 export const WorkoutSchema = SchemaFactory.createForClass(Workout).index({

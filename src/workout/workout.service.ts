@@ -120,14 +120,14 @@ export class WorkoutService {
   }
   async changeWorkoutStatus(
     workoutPatchDto: WorkoutPatchDto,
-    user: User
+    user: IUser
   ): Promise<Workout> {
     const {
       body: { isActive },
       params: { id },
     } = workoutPatchDto;
     const found = await this.workoutModel.findById(id);
-    if (found.createdBy.email !== user.email) {
+    if (found.createdBy !== user._id.toString()) {
       this.logger.error(
         `Failed to edit workout status, ${user.name} is not authorized`
       );
@@ -148,7 +148,7 @@ export class WorkoutService {
   }
   async editWorkout(
     workoutPutDto: WorkoutPutDto,
-    user: User
+    user: IUser
   ): Promise<Workout> {
     const {
       body,
@@ -156,7 +156,7 @@ export class WorkoutService {
     } = workoutPutDto;
     const found = await this.workoutModel.findById(workoutPutDto.params.id);
     const { createdBy, ...rest } = body;
-    if (found.createdBy.email !== user.email) {
+    if (found.createdBy !== user._id) {
       this.logger.error(
         `Failed to edit ${body.name}, ${user.name} is not authorized`
       );

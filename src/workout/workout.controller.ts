@@ -91,7 +91,7 @@ export class WorkoutController {
   @Roles(RolesEnum.TEACHER)
   changeWorkoutStatus(
     @BodyAndParam() WorkoutPatchDto: WorkoutPatchDto,
-    @GetUser() user: User
+    @GetUser() user: IUser
   ): Promise<Workout> {
     return this.workoutService.changeWorkoutStatus(WorkoutPatchDto, user);
   }
@@ -100,7 +100,7 @@ export class WorkoutController {
   @Roles(RolesEnum.TEACHER)
   editWorkout(
     @BodyAndParam() WorkoutPutDto: WorkoutPutDto,
-    @GetUser() user: User
+    @GetUser() user: IUser
   ): Promise<Workout> {
     return this.workoutService.editWorkout(WorkoutPutDto, user);
   }
