@@ -78,9 +78,9 @@ export class AuthService {
   async getTokens(
     user: UserDocument
   ): Promise<{ accessToken: string; refreshToken: string }> {
-    const { email, _id, role, name, age } = user;
+    const { email, _id, role, name, age, bodyMeasurements } = user;
     const [accessToken, refreshToken] = await Promise.all([
-      this.jwtService.sign({ email, _id, role, name, age }),
+      this.jwtService.sign({ email, _id, role, name, age, bodyMeasurements }),
       this.jwtService.sign(
         { email },
         { secret: this.configService.get("REFRESH_SECRET"), expiresIn: "90d" }

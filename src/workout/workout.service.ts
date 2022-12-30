@@ -31,6 +31,10 @@ export class WorkoutService {
   async createWorkout(workoutDto: WorkoutDto, user: IUser): Promise<Workout> {
     try {
       const { studentId } = workoutDto;
+      await this.workoutModel.updateMany(
+        { student: studentId },
+        { $set: { isActive: false } }
+      );
 
       const workout = await this.workoutModel.create({
         ...workoutDto,
@@ -38,7 +42,6 @@ export class WorkoutService {
         createdBy: user._id,
         isActive: true,
       });
-
       await this.userModel.findByIdAndUpdate(studentId, {
         $push: { workouts: workout._id },
       });
