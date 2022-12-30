@@ -4,8 +4,8 @@ import { MongooseModule } from "@nestjs/mongoose";
 
 import { AuthModule } from "./auth/auth.module";
 import { WorkoutModule } from "./workout/workout.module";
-import { UserModule } from './user/user.module';
-
+import { UserModule } from "./user/user.module";
+//
 @Module({
   imports: [
     ConfigModule.forRoot({
