@@ -93,16 +93,18 @@ export class AuthService {
     refreshToken,
     id,
   }: RefreshTokenDto): Promise<{ accessToken: string; refreshToken: string }> {
-    const user = await this.userModel.findById({ _id: id });
+    const user = await this.userModel
+      .findById({ _id: id })
+      .select("+refreshToken");
     if (!user || !user.refreshToken)
-      throw new UnauthorizedException("Acesso negado");
+      throw new NotFoundException("Efetue o login novamente");
     const isTokenMatching = await bcrypt.compare(
       refreshToken,
       user.refreshToken
     );
     if (!isTokenMatching) {
       this.logger.error(`Failed to get new token for user ${user.name}.`);
-      throw new NotFoundException("Acesso negado");
+      throw new NotFoundException("Efetue o login novamente");
     }
 
     const tokens = await this.getTokens(user);
