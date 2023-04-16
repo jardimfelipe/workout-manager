@@ -21,6 +21,7 @@ export class AuthSignUpDto {
   @IsNumber()
   age?: number;
 
+  @IsOptional()
   @IsString()
   @MinLength(8, { message: "Senha menor do que o permitido" })
   @MaxLength(32, { message: "Senha maior do que o permitido" })

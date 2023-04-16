@@ -1,16 +1,21 @@
 import {
+  ConflictException,
   Injectable,
   InternalServerErrorException,
   Logger,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
+import * as bcrypt from "bcrypt";
 
 import { User, UserDocument } from "../auth/schemas/auth.schema";
 import { GetStudentsByTeacherDto } from "./dto/students-by-teacher-dto";
 import { WorkoutService } from "src/workout/workout.service";
 import { SetNewStudentHistoryDto } from "./dto/set-student-history-dto";
 import { IUser } from "src/auth/Interface/user";
+import { CreateStudentDto } from "./dto/create-student-dto";
+
+const CONFLICT_ERROR_CODE = 11000;
 
 @Injectable()
 export class UserService {
@@ -19,6 +24,21 @@ export class UserService {
     @InjectModel(User.name)
     private userModel: Model<UserDocument>
   ) {}
+
+  async createStudent(createStudentDto: CreateStudentDto): Promise<void> {
+    const user = new this.userModel({
+      ...createStudentDto,
+    });
+    try {
+      await user.save();
+    } catch (error) {
+      if (error.code === CONFLICT_ERROR_CODE) {
+        throw new ConflictException("Usuário já cadastrado");
+      } else {
+        throw new InternalServerErrorException();
+      }
+    }
+  }
 
   async getStudentsByTeacher(
     getStudentsByTeacherDto: GetStudentsByTeacherDto
