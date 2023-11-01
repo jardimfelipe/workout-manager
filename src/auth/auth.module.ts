@@ -21,7 +21,7 @@ import { JwtStrategy } from "./jwt.strategy";
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get("JWT_SECRET"),
-        signOptions: { expiresIn: 10 },
+        signOptions: { expiresIn: 36000 },
       }),
     }),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
